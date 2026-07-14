@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Day 7 IE Quiz - Supply Chain Coordination</title>
+<style>
+  :root { --bg:#0f172a; --card:#ffffff; --ink:#0f172a; --muted:#64748b; --accent:#2563eb; --good:#15803d; --bad:#b91c1c; --soft:#dbeafe; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { margin:0; font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif; background:linear-gradient(135deg,#0f172a,#1e3a8a); color:var(--ink); min-height:100vh; padding:18px; }
+  .wrap { max-width:760px; margin:0 auto; }
+  .card { background:var(--card); border-radius:24px; padding:24px; box-shadow:0 20px 60px rgba(0,0,0,.28); margin-top:18px; }
+  h1 { font-size:2rem; margin:0 0 10px; color:#fff; text-align:center; }
+  .subtitle { color:#dbeafe; text-align:center; margin-bottom:14px; }
+  h2 { font-size:1.35rem; line-height:1.3; margin:8px 0 18px; }
+  button { font:inherit; touch-action:manipulation; cursor:pointer; }
+  .start,.next,.restart { border:none; border-radius:999px; background:var(--accent); color:white; padding:14px 20px; width:100%; font-weight:700; margin-top:15px; }
+  .option { width:100%; text-align:left; border:2px solid #e2e8f0; border-radius:18px; background:#f8fafc; padding:14px; margin:8px 0; line-height:1.35; }
+  .option span { display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:50%; background:var(--soft); color:var(--accent); font-weight:800; margin-right:8px; }
+  .option.goodpick { border-color:var(--good); background:#ecfdf5; }
+  .option.badpick { border-color:var(--bad); background:#fef2f2; }
+  .option:disabled { cursor:default; opacity:1; }
+  .progress { color:var(--muted); font-weight:700; font-size:.95rem; }
+  .feedback { margin-top:14px; padding:12px; border-radius:16px; display:none; line-height:1.4; font-weight:700; }
+  .feedback.good { display:block; background:#dcfce7; color:#14532d; }
+  .feedback.bad { display:block; background:#fee2e2; color:#7f1d1d; }
+  .score { font-size:3rem; text-align:center; font-weight:900; color:var(--accent); }
+  .badge { display:inline-block; background:#dbeafe; color:#1e40af; padding:6px 12px; border-radius:999px; font-weight:700; }
+  .tip { color:var(--muted); font-size:.95rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Day 7: Supply Chain Coordination</h1>
+  <div class="subtitle">Contracts, incentives, and win-win decisions</div>
+  <section class="card" id="intro">
+    <span class="badge">Fun challenge</span>
+    <h2>Can you think like an industrial engineer?</h2>
+    <p>Choose the best answer. You will only see whether your answer is correct or incorrect.</p>
+    <p class="tip">Works best in Safari/Chrome from a GitHub Pages link, not as a downloaded file preview.</p>
+    <button type="button" class="start" id="startBtn">Start the quiz</button>
+  </section>
+  <section class="card" id="questionCard" style="display:none">
+    <div class="progress" id="progressText"></div>
+    <h2 id="questionText"></h2>
+    <div id="optionsBox"></div>
+    <div class="feedback" id="feedback" aria-live="polite"></div>
+    <button type="button" class="next" id="nextBtn" style="display:none">Next</button>
+  </section>
+  <section class="card" id="result" style="display:none">
+    <span class="badge">Finished</span>
+    <h2>Your score</h2>
+    <div class="score" id="scoreBox">0/12</div>
+    <p id="resultText"></p>
+    <button type="button" class="restart" id="restartBtn">Play again</button>
+  </section>
+</div>
+<script>
+(function() {
+  var questions = [{"q": "Why can a retailer’s best order quantity be different from the supply chain’s best quantity?", "options": ["The retailer may carry more risk than the manufacturer", "Demand is never uncertain", "Contracts are illegal", "The manufacturer does not exist"], "ans": "A"}, {"q": "In the manufacturer-retailer scenario, who chooses the wholesale price first?", "options": ["Customer", "Manufacturer", "Retailer", "Transportation company"], "ans": "B"}, {"q": "What is the purpose of a rebate/buyback contract?", "options": ["Make the retailer pay twice", "Remove the product from the market", "Share leftover-inventory risk", "Ban uncertainty"], "ans": "C"}, {"q": "In a revenue-sharing contract, the manufacturer usually...", "options": ["ignores sales", "sets demand directly", "pays all customers", "receives a percentage of retailer revenue"], "ans": "D"}, {"q": "If the manufacturer shares some inventory risk, the retailer may be willing to...", "options": ["order more units", "stop selling", "delete the objective function", "hide all data"], "ans": "A"}, {"q": "What does “supply chain coordination” mean in this lesson?", "options": ["Making every company use the same logo", "Aligning incentives so the whole system performs better", "Forcing all demand to be equal", "Avoiding all contracts"], "ans": "B"}, {"q": "Why can a contract create a win-win situation?", "options": ["It makes demand known with certainty", "It removes all costs", "It changes risk/revenue sharing so both parties can gain", "It makes leftovers disappear"], "ans": "C"}, {"q": "For the whole supply chain, the underage cost uses which cost instead of the wholesale price?", "options": ["Retailer logo cost", "Advertising cost", "PowerPoint cost", "Manufacturing cost"], "ans": "D"}, {"q": "A practical problem with revenue sharing is that...", "options": ["sales data may be hard to verify or track", "there is no retailer", "the product cannot be sold", "demand becomes negative"], "ans": "A"}, {"q": "A practical problem with rebate contracts is that...", "options": ["customers must solve equations", "returns/logistics may increase cost", "there is no inventory", "all products become free"], "ans": "B"}, {"q": "What is the key idea behind comparing retailer profit and total supply chain profit?", "options": ["Only the retailer matters", "Only the manufacturer matters", "Local decisions may not maximize total system performance", "Profit should never be calculated"], "ans": "C"}, {"q": "The big lesson of Day 7 is that industrial engineers often design...", "options": ["only posters", "only games", "only factories", "systems and incentives, not just equations"], "ans": "D"}];
+  var current = 0;
+  var score = 0;
+  var locked = false;
+  var letters = ['A','B','C','D'];
+  function el(id) { return document.getElementById(id); }
+  function show(id) { el(id).style.display = 'block'; }
+  function hide(id) { el(id).style.display = 'none'; }
+  function clearOptions() { el('optionsBox').innerHTML = ''; }
+  function renderQuestion() {
+    locked = false;
+    clearOptions();
+    el('feedback').className = 'feedback';
+    el('feedback').innerHTML = '';
+    hide('nextBtn');
+    var item = questions[current];
+    el('progressText').innerHTML = 'Question ' + (current + 1) + ' of ' + questions.length;
+    el('questionText').innerHTML = item.q;
+    for (var i = 0; i < item.options.length; i++) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'option';
+      btn.setAttribute('data-letter', letters[i]);
+      btn.innerHTML = '<span>' + letters[i] + '</span> ' + item.options[i];
+      btn.addEventListener('click', function() { choose(this); }, false);
+      el('optionsBox').appendChild(btn);
+    }
+  }
+  function startQuiz() { hide('intro'); current = 0; score = 0; show('questionCard'); renderQuestion(); }
+  function choose(btn) {
+    if (locked) return;
+    locked = true;
+    var chosen = btn.getAttribute('data-letter');
+    var correct = questions[current].ans;
+    var optionButtons = document.querySelectorAll('.option');
+    for (var i = 0; i < optionButtons.length; i++) optionButtons[i].disabled = true;
+    if (chosen === correct) {
+      score++;
+      btn.className += ' goodpick';
+      el('feedback').className = 'feedback good';
+      el('feedback').innerHTML = 'Correct!';
+    } else {
+      btn.className += ' badpick';
+      el('feedback').className = 'feedback bad';
+      el('feedback').innerHTML = 'Incorrect.';
+    }
+    show('nextBtn');
+  }
+  function nextQuestion() {
+    current++;
+    if (current < questions.length) renderQuestion();
+    else finish();
+  }
+  function finish() {
+    hide('questionCard');
+    el('scoreBox').innerHTML = score + '/' + questions.length;
+    var msg = 'Good effort! You can replay and improve your decision logic.';
+    if (score >= questions.length - 2) msg = 'Excellent! You are thinking like an industrial engineer.';
+    else if (score >= Math.ceil(questions.length/2)) msg = 'Nice work! Try again to strengthen the concepts.';
+    el('resultText').innerHTML = msg;
+    show('result');
+  }
+  function restart() { window.location.reload(); }
+  el('startBtn').addEventListener('click', startQuiz, false);
+  el('nextBtn').addEventListener('click', nextQuestion, false);
+  el('restartBtn').addEventListener('click', restart, false);
+})();
+</script>
+</body>
+</html>
